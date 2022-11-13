@@ -1,0 +1,3 @@
+input:
+  protein_file: "/var/data/proteins/prot_274.fasta"
+  spectrum_file: "/var/data/spectra/NOD2_E3.mzML"

@@ -7,11 +7,11 @@ cabal-version: 1.12
 name:           hs-hypedsearch
 version:        0.1.0.0
 description:    Please see the README on GitHub at <https://github.com/githubuser/hs-hypedsearch#readme>
-homepage:       https://github.com/githubuser/hs-hypedsearch#readme
-bug-reports:    https://github.com/githubuser/hs-hypedsearch/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2022 Author name here
+homepage:       https://github.com/rangelsen/hs-hypedsearch#readme
+bug-reports:    https://github.com/rangelsen/hs-hypedsearch/issues
+author:         Roy Angelsen
+maintainer:     roy.angelsen@gmail.com
+copyright:      2022 Roy Angelsen
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
@@ -21,10 +21,11 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/hs-hypedsearch
+  location: https://github.com/rangelsen/hs-hypedsearch
 
 library
   exposed-modules:
+      Config
       Lib
       MzML
   other-modules:
@@ -36,8 +37,11 @@ library
       base >=4.7 && <5
     , bioinformatics-toolkit
     , bytestring
+    , microlens
+    , microlens-th
     , unordered-containers
     , xml
+    , yaml
   default-language: Haskell2010
 
 executable hs-hypedsearch-exe
@@ -52,8 +56,11 @@ executable hs-hypedsearch-exe
     , bioinformatics-toolkit
     , bytestring
     , hs-hypedsearch
+    , microlens
+    , microlens-th
     , unordered-containers
     , xml
+    , yaml
   default-language: Haskell2010
 
 test-suite hs-hypedsearch-test
@@ -69,6 +76,9 @@ test-suite hs-hypedsearch-test
     , bioinformatics-toolkit
     , bytestring
     , hs-hypedsearch
+    , microlens
+    , microlens-th
     , unordered-containers
     , xml
+    , yaml
   default-language: Haskell2010

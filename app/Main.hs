@@ -3,11 +3,17 @@ module Main (main) where
 import Bio.Data.Fasta
 import Bio.Seq
 import qualified Data.ByteString.Char8 as B
+import Data.Yaml.Config
+import Config
+import Lens.Micro
 
 main :: IO ()
 main = do
+    config <- loadYamlSettings ["config.yaml"] [] useEnv :: IO Config
+    let protFile = config  ^. cfgInput -- ^. proteinFile
     (s:_) <- readFasta' "/home/roy/data/genome/vibrio_cholerae_genome" :: IO [DNA IUPAC]
-    printSeq s
+    -- printSeq s
+    putStrLn (show protFile)
 
 printSeq :: DNA IUPAC -> IO ()
 printSeq s = do

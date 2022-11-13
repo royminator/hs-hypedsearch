@@ -1,10 +1,10 @@
 name:                hs-hypedsearch
 version:             0.1.0.0
-github:              "githubuser/hs-hypedsearch"
+github:              "rangelsen/hs-hypedsearch"
 license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2022 Author name here"
+author:              "Roy Angelsen"
+maintainer:          "roy.angelsen@gmail.com"
+copyright:           "2022 Roy Angelsen"
 
 extra-source-files:
 - README.md
@@ -25,6 +25,9 @@ dependencies:
 - bioinformatics-toolkit
 - unordered-containers
 - bytestring
+- yaml
+- microlens
+- microlens-th
 
 ghc-options:
 - -Wall
