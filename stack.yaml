@@ -35,7 +35,11 @@ packages:
 # These entries can reference officially published versions as well as
 # forks / in-progress versions pinned to a git hash. For example:
 #
-# extra-deps:
+extra-deps:
+- bioinformatics-toolkit-0.10.0@sha256:088639d1e1a3343a3c77885f1577e663e81456560eda1a9509b39a45c95baa73,3215
+- HsHTSLib-1.9.2.2@sha256:f3e5632c09ca8378149f1a11cbf1b4221d46c0d67e202db91afd6057ae365091,3092
+- clustering-0.4.1@sha256:78d8e077f27526ff03b3879d951e09e040ca7dc23dd0e6044970be9d40ea37e2,2066
+
 # - acme-missiles-0.3
 # - git: https://github.com/commercialhaskell/stack.git
 #   commit: e7b331f14bcffb8367cd58fbfc8b40ec7642100a

@@ -3,7 +3,28 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    hackage: bioinformatics-toolkit-0.10.0@sha256:088639d1e1a3343a3c77885f1577e663e81456560eda1a9509b39a45c95baa73,3215
+    pantry-tree:
+      size: 3295
+      sha256: 6ad8be1336dd6c102f2f7274a3088ab38d32dff42522011257658a4a0f28880f
+  original:
+    hackage: bioinformatics-toolkit-0.10.0@sha256:088639d1e1a3343a3c77885f1577e663e81456560eda1a9509b39a45c95baa73,3215
+- completed:
+    hackage: HsHTSLib-1.9.2.2@sha256:f3e5632c09ca8378149f1a11cbf1b4221d46c0d67e202db91afd6057ae365091,3092
+    pantry-tree:
+      size: 7200
+      sha256: dc0441731dfe6c5f1ac7ef47d63ad3509e2f3b4ae483ee5a8054f825aba1387c
+  original:
+    hackage: HsHTSLib-1.9.2.2@sha256:f3e5632c09ca8378149f1a11cbf1b4221d46c0d67e202db91afd6057ae365091,3092
+- completed:
+    hackage: clustering-0.4.1@sha256:78d8e077f27526ff03b3879d951e09e040ca7dc23dd0e6044970be9d40ea37e2,2066
+    pantry-tree:
+      size: 1180
+      sha256: d9bc3fe969d648977c10310784700eb88966b14a3088c4cdfd4178f297c17678
+  original:
+    hackage: clustering-0.4.1@sha256:78d8e077f27526ff03b3879d951e09e040ca7dc23dd0e6044970be9d40ea37e2,2066
 snapshots:
 - completed:
     size: 619405

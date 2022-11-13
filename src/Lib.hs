@@ -1,6 +1,5 @@
-module Lib
-    ( someFunc
-    ) where
+module Lib where
 
-someFunc :: IO ()
-someFunc = putStrLn "someFunc"
+type MZRatio = Double
+type RelativeAbundance = Double
+type MassSpecResult = [(MZRatio, RelativeAbundance)]
