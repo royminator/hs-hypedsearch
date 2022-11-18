@@ -1,26 +1,41 @@
 module MzML
     ( readMzML
-    , printXML
     ) where
 
-import System.IO
 import Text.XML.Light
-import Text.XML.Light.Input
+import Domain
+import Data.Maybe (fromMaybe)
 
-data Spectrum = Spectrum
-    { spMzRatios :: [Double]
-    , spIntensity :: [Double]
-    } deriving (Show)
+MZ_ACCESSION :: String
+MZ_ACCESSION = "MS:1000514"
+
+INTENSITY_ACCESSION :: String
+INTENSITY_ACCESSION = "MS:1000515"
 
 readMzML :: FilePath -> IO [Spectrum]
 readMzML path = do
     contents <- readFile path
-    let xml = parseXML contents
-    return []
+    let spectrumList =
+            parseXMLDoc contents >>=
+            filterElementName (qNameEq "spectrumList") >>=
+            parseSpectrumList
 
-printXML :: [Content] -> IO ()
-printXML [] = return ()
-printXML (x:xs) = do
-    putStrLn $ show x
-    printXML xs
-    
+    pure $ fromMaybe [] spectrumList
+
+qNameEq :: String -> QName -> Bool
+qNameEq n (QName qn _ _) = n == qn
+
+parseSpectrumList :: Element -> Maybe [Spectrum]
+parseSpectrumList e =
+    pure $ map parseSpectrum (filterElementsName (qNameEq "spectrum") e)
+
+parseSpectrum :: Element -> Spectrum
+parseSpectrum e =
+    let binaryList = filterElementName (qNameEq "binaryDataArrayList") e
+        mz = findBinaryWithAccession binaryList
+        intensity = findBinaryWithAccession INTENSITY binaryList
+    in Spectrum mz intensity
+
+findBinaryWithAccession :: String -> Element -> [Double]
+findBinaryWithAccession acc e = 
+

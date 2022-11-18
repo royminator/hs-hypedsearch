@@ -6,7 +6,7 @@
 module Fasta
     ( readFasta
     , FastaReport (..)
-    , sequences
+    , frSequences
     , Sequence (..)
     , seqDescr
     ) where
@@ -21,7 +21,7 @@ data Sequence a = Sequence
     } deriving (Show)
 
 newtype FastaReport = FastaReport
-    { _sequences :: [Sequence AA]
+    { _frSequences :: [Sequence AA]
     } deriving (Show)
 
 makeLenses ''FastaReport
@@ -30,16 +30,16 @@ makeLenses ''Sequence
 readFasta :: FilePath -> IO FastaReport
 readFasta path = do
     content <- readFile path
-    return $ foldl parseFile (FastaReport []) (lines content)
+    pure $ foldl parseFile (FastaReport []) (lines content)
 
 parseFile :: FastaReport -> String -> FastaReport
 parseFile rep line = do
     let newRep = addSeqIfNew rep line
-        updated = parseLine (last (newRep ^. sequences)) line
-    set (sequences . _last) updated newRep
+        updated = parseLine (last (newRep ^. frSequences)) line
+    set (frSequences . _last) updated newRep
 
 addSeqIfNew :: FastaReport -> String -> FastaReport
-addSeqIfNew rep ('>':_) = over sequences (++ [Sequence "" []]) rep
+addSeqIfNew rep ('>':_) = over frSequences (++ [Sequence "" []]) rep
 addSeqIfNew rep _ = rep
 
 parseLine :: Sequence AA -> String -> Sequence AA
