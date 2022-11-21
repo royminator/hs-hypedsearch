@@ -14,5 +14,6 @@ main = do
 
     fasta <- Fasta.readFasta fastaFile
     spectrum <- MzML.readMzML spectrum_file
+    print $ head spectrum
     putStrLn "exited"
 
