@@ -40,17 +40,18 @@ parseSpectrumList e =
 
 parseSpectrum :: Element -> Maybe Spectrum
 parseSpectrum e =
-    filterElementName (qNameEq "binaryDataArrayList") e
-    >>= parseBinaryArrayList
+    let binArrListElm = filterElementName (qNameEq "binaryDataArrayList") e
+        (mz, int) = parseBinaryArrayList binArrListElm
+    in Spectrum <$> getSpectrumId e <*> mz <*> int
 
-parseBinaryArrayList :: Element -> Maybe Spectrum
-parseBinaryArrayList e =
+parseBinaryArrayList :: Maybe Element -> (Maybe String, Maybe String)
+parseBinaryArrayList (Just e) =
     let binaryDatas = map parseBinaryData (elChildren e)
-    in binaryDataToSpectrum binaryDatas
+    in extractBinaryData binaryDatas
+parseBinaryArrayList _ = (Nothing, Nothing)
 
-binaryDataToSpectrum :: [Maybe BinaryData] -> Maybe Spectrum
-binaryDataToSpectrum l =
-    Spectrum <$> getMz l <*> getIntensity l
+extractBinaryData :: [Maybe BinaryData] -> (Maybe String, Maybe String)
+extractBinaryData l = (getMz l, getIntensity l)
     where
         getMz bs = getBinaryProp bs "m/z array"
         getIntensity bs = getBinaryProp bs "intensity array"
@@ -59,8 +60,8 @@ getBinaryProp :: [Maybe BinaryData] -> String -> Maybe String
 getBinaryProp bs prop =
     let dat = filter (\b -> (bdProperty <$> b) == Just prop) bs
     in case dat of
-        [] -> Nothing
         [Just bd] -> pure $ bdData bd
+        _ -> Nothing
 
 parseBinaryData :: Element ->  Maybe BinaryData
 parseBinaryData e =
@@ -69,6 +70,9 @@ parseBinaryData e =
         arrType = getArrayType cvParams
         dat = getBinaryData e
     in BinaryData <$> prop <*> dat <*> arrType
+
+getSpectrumId :: Element -> Maybe String
+getSpectrumId = findAttr (unqual "id")
 
 getPropertyName :: [Element] -> Maybe String
 getPropertyName [] = Nothing

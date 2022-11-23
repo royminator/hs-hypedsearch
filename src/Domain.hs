@@ -3,6 +3,7 @@
 module Domain
     ( AA (..)
     , Spectrum (..)
+    , spId
     , spMz
     , spIntensity
     ) where
@@ -14,7 +15,8 @@ data AA = A | R | N | D | C | Q | E | G | H | I | L | K | M | F | P | O | S | U 
 
 
 data Spectrum = Spectrum
-    { _spMz :: String
+    { _spId :: String
+    , _spMz :: String
     , _spIntensity :: String
     } deriving (Show)
 

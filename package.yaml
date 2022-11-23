@@ -25,6 +25,9 @@ dependencies:
 - yaml
 - microlens
 - microlens-th
+- bytestring
+- base64-bytestring
+- binary
 
 ghc-options:
 - -Wall
