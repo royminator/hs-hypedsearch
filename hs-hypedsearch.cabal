@@ -28,7 +28,6 @@ library
       Config
       Domain
       Fasta
-      Lib
       MzML
   other-modules:
       Paths_hs_hypedsearch

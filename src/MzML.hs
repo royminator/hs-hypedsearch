@@ -99,8 +99,9 @@ getBinaryData e =
 
 getElementText :: Element -> Maybe String
 getElementText e =
-    let [Text content] = elContent e
-    in pure $ cdData content
+    case (head . elContent) e of
+        Text content -> pure $ cdData content
+        _ -> Nothing
 
 binStringToByteString :: String -> Maybe BL.ByteString
 binStringToByteString = hush . B64.decode . BL.pack
