@@ -6,4 +6,4 @@ import Test.Hspec
 import MzMLSpec
 
 main :: IO ()
-main = hspec undefined
+main = hspec mzMLSpec

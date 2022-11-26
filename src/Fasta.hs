@@ -4,7 +4,7 @@
 {-# LANGUAGE DeriveTraversable #-}
 
 module Fasta
-    ( readFasta
+    ( parseFasta
     , FastaReport (..)
     , frSequences
     , Sequence (..)
@@ -27,10 +27,9 @@ newtype FastaReport = FastaReport
 makeLenses ''FastaReport
 makeLenses ''Sequence
 
-readFasta :: FilePath -> IO FastaReport
-readFasta path = do
-    content <- readFile path
-    pure $ foldl parseFile (FastaReport []) (lines content)
+parseFasta :: String -> FastaReport
+parseFasta content =
+    foldl parseFile (FastaReport []) (lines content)
 
 parseFile :: FastaReport -> String -> FastaReport
 parseFile rep line = do

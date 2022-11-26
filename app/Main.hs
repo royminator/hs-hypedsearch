@@ -6,15 +6,19 @@ import Lens.Micro
 import qualified Fasta
 import qualified MzML
 import Domain (spId, spMz, spIntensity)
+import qualified Data.ByteString.Lazy as BL
 
 main :: IO ()
 main = do
     config <- loadYamlSettings ["config.yaml"] [] useEnv :: IO Config
     let fastaFile = config ^. cfgInput . ciProteinFile
-    let spectrum_file = config ^. cfgInput . ciSpectrumFile
+    let spectrumFile = config ^. cfgInput . ciSpectrumFile
 
-    fasta <- Fasta.readFasta fastaFile
-    spectra <- MzML.readMzML spectrum_file
+    fastaContent <- readFile fastaFile
+    let fasta = Fasta.parseFasta fastaContent
+
+    mzMLContent <- BL.readFile spectrumFile
+    let spectra = MzML.parseMzML mzMLContent
     print $ head spectra ^. spMz
     putStrLn "exited"
 

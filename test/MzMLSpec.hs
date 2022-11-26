@@ -3,7 +3,8 @@ module MzMLSpec
     ) where
 
 import Test.Hspec
+
 import MzML
 
 mzMLSpec :: Spec
-mzMLSpec = undefined
+mzMLSpec = describe

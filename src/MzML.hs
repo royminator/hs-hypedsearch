@@ -1,11 +1,11 @@
 module MzML
-    ( readMzML
+    ( parseMzML
     ) where
 
 import Text.XML.Light
 import Domain
 import Prelude hiding (lookup)
-import Data.Maybe (mapMaybe)
+import Data.Maybe (mapMaybe, fromMaybe)
 import Data.Map hiding (mapMaybe, foldl, filter, map)
 import Control.Error.Util (hush)
 import qualified Data.ByteString.Lazy.Char8 as BL
@@ -22,16 +22,11 @@ propAccessions = ["MS:1000515", "MS:1000514"]
 typeAccessions :: [String]
 typeAccessions = ["MS:1000521", "MS:1000523"]
 
-readMzML :: FilePath -> IO [Spectrum]
-readMzML path = do
-    contents <- BL.readFile path
-    let spectrumList =
-            parseXMLDoc contents
+parseMzML :: BL.ByteString -> [Spectrum]
+parseMzML contents =
+    let spectrumList = parseXMLDoc contents
             >>= filterElementName (qNameEq "spectrumList")
-
-    case spectrumList of
-        Nothing -> pure []
-        Just s -> pure $ parseSpectrumList s
+    in maybe [] parseSpectrumList spectrumList
 
 qNameEq :: String -> QName -> Bool
 qNameEq n (QName qn _ _) = n == qn
