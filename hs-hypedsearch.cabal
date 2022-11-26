@@ -72,6 +72,7 @@ test-suite hs-hypedsearch-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      MzMLSpec
       Paths_hs_hypedsearch
   hs-source-dirs:
       test
@@ -84,6 +85,7 @@ test-suite hs-hypedsearch-test
     , containers
     , errors
     , hs-hypedsearch
+    , hspec
     , microlens
     , microlens-th
     , xml

@@ -1,2 +1,9 @@
+module Main
+    ( main
+    ) where
+
+import Test.Hspec
+import MzMLSpec
+
 main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = hspec undefined
