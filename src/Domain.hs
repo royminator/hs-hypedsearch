@@ -16,8 +16,8 @@ data AA = A | R | N | D | C | Q | E | G | H | I | L | K | M | F | P | O | S | U 
 
 data Spectrum = Spectrum
     { _spId :: String
-    , _spMz :: String
-    , _spIntensity :: String
+    , _spMz :: [Double]
+    , _spIntensity :: [Double]
     } deriving (Show)
 
 makeLenses ''Spectrum

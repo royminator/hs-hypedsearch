@@ -40,6 +40,8 @@ library
     , base64-bytestring
     , binary
     , bytestring
+    , containers
+    , errors
     , microlens
     , microlens-th
     , xml
@@ -58,6 +60,8 @@ executable hs-hypedsearch-exe
     , base64-bytestring
     , binary
     , bytestring
+    , containers
+    , errors
     , hs-hypedsearch
     , microlens
     , microlens-th
@@ -78,6 +82,8 @@ test-suite hs-hypedsearch-test
     , base64-bytestring
     , binary
     , bytestring
+    , containers
+    , errors
     , hs-hypedsearch
     , microlens
     , microlens-th

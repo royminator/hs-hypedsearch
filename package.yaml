@@ -28,6 +28,8 @@ dependencies:
 - bytestring
 - base64-bytestring
 - binary
+- containers
+- errors
 
 ghc-options:
 - -Wall
