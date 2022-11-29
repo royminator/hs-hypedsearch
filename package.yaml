@@ -67,3 +67,4 @@ tests:
     dependencies:
     - hs-hypedsearch
     - hspec
+    - QuickCheck

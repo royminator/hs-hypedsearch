@@ -18,7 +18,7 @@ data Spectrum = Spectrum
     { _spId :: String
     , _spMz :: [Double]
     , _spIntensity :: [Double]
-    } deriving (Show)
+    } deriving (Show, Eq)
 
 makeLenses ''Spectrum
 

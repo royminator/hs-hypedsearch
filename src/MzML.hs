@@ -5,7 +5,7 @@ module MzML
 import Text.XML.Light
 import Domain
 import Prelude hiding (lookup)
-import Data.Maybe (mapMaybe, fromMaybe)
+import Data.Maybe (mapMaybe)
 import Data.Map hiding (mapMaybe, foldl, filter, map)
 import Control.Error.Util (hush)
 import qualified Data.ByteString.Lazy.Char8 as BL
