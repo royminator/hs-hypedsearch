@@ -17,6 +17,8 @@ import Data.Either
 import GHC.Float (double2Float, float2Double)
 
 data EncodingType = Float | Double
+data DataType = Float32 Float | Float64 Double deriving Show
+data Spec = Spec { id :: String, vals1 :: [DataType], vals2 :: [DataType] } deriving Show
 
 main :: IO ()
 main = do
@@ -29,23 +31,20 @@ main = do
 
     mzMLContent <- BL.readFile spectrumFile
     let spectra = MzML.parseMzML mzMLContent
-    -- print (head spectra)
+    print (head spectra)
     let floats = [3.8, 8.1, 1238.3987, 3.99999872987] :: [Float]
     let doubles = [3.8, 8.1, 1238.3987, 3.99999872987] :: [Double]
-    let fr = map toRational floats
-        fd = map float2Double floats
-    print fd
-    let f = encodeAsBinaryD fd Float
-        d = encodeAsBinaryD fd Double
-    print f
-    print d
-    let f' = runGetFloat $ B64.decodeLenient f
-    print f'
-    
-    let f'' = encodeAsBinaryD (map float2Double f') Float
-    print f''
-
+    let spec1 = Spec "Hello" (map float2DataType floats) (map double2DataType doubles)
+    let spec2 = Spec "Hello" (map float2DataType floats) (map float2DataType floats)
+        specs = [spec1, spec2]
+    print specs
     putStrLn "exited"
+
+float2DataType :: Float -> DataType
+float2DataType = Float32
+
+double2DataType :: Double -> DataType
+double2DataType = Float64
 
 encodeAsBinaryD :: [Double] -> EncodingType -> BL.ByteString
 encodeAsBinaryD xs t = B64.encode (runPut (putValuesD xs t))

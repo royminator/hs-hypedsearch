@@ -4,11 +4,7 @@
 {-# LANGUAGE DeriveTraversable #-}
 
 module Fasta
-    ( parseFasta
-    , FastaReport (..)
-    , frSequences
-    , Sequence (..)
-    , seqDescr
+    ( module Fasta
     ) where
 
 import Domain
@@ -21,7 +17,7 @@ data Sequence a = Sequence
     } deriving (Show)
 
 newtype FastaReport = FastaReport
-    { _frSequences :: [Sequence AA]
+    { _frSequences :: [Sequence AminoAcid]
     } deriving (Show)
 
 makeLenses ''FastaReport
@@ -41,12 +37,12 @@ addSeqIfNew :: FastaReport -> String -> FastaReport
 addSeqIfNew rep ('>':_) = over frSequences (++ [Sequence "" []]) rep
 addSeqIfNew rep _ = rep
 
-parseLine :: Sequence AA -> String -> Sequence AA
+parseLine :: Sequence AminoAcid -> String -> Sequence AminoAcid
 parseLine _ ('>':cs) = Sequence cs []
 parseLine s line =
     let amino = aminoFromStr line
     in over seqData (++ amino) s
 
-aminoFromStr :: String -> [AA]
-aminoFromStr = map (read . pure :: Char -> AA)
+aminoFromStr :: String -> [AminoAcid]
+aminoFromStr = map (read . pure :: Char -> AminoAcid)
 
