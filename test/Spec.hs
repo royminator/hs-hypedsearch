@@ -2,8 +2,12 @@ module Main
     ( main
     ) where
 
-import Test.Hspec
+import Test.Tasty
+import Test.Tasty.Hspec
 import MzMLSpec
 
 main :: IO ()
-main = hspec mzMLSpec
+main = do
+    spec <- testSpec "mzMLSpec" mzMLSpec
+    defaultMain spec
+

@@ -2,37 +2,38 @@ module MzMLSpec
     ( mzMLSpec
     ) where
 
+import MzML
 import Test.Hspec
 import Test.QuickCheck
 import Test.QuickCheck.Gen
 import qualified Data.ByteString.Lazy.Char8 as BL
 import qualified Data.ByteString.Base64.Lazy as B64
 import Text.XML.Light
-import MzML
 import Domain
 import Lens.Micro
 import Data.Binary
 import Data.Binary.Put
 import GHC.Float (double2Float)
+import Data.AEq
 
 data EncodingType = Float | Double
 
 instance Arbitrary Spectrum where
     arbitrary = do
-        ident <- listOf $ elements ['a'..'z']
-        mz <- vectorOf 100 arbitrary
-        intensity <- vectorOf 100 arbitrary
-        return $ Spectrum ident mz intensity
+        ident <- listOf1 $ elements ['a'..'z']
+        mz <- listOf1 arbitrary
+        intensity <- listOf1 arbitrary
+        pure $ Spectrum ident mz intensity
 
 mzMLSpec :: Spec
-mzMLSpec = do
+mzMLSpec =
     describe "parseMzML" $ do
-        it "returns the parsed version of the spectrum XML" $ property $
+        it "returns the parsed version of the spectrum XML" $ property
             prop_parseMzML_parsedEqualsDeserializedInput
 
 prop_parseMzML_parsedEqualsDeserializedInput :: Spectrum -> Bool
 prop_parseMzML_parsedEqualsDeserializedInput input =
-    cmpSpec ((head . parseMzML . serializeSpectrum) input) input 1e-4
+    cmpSpec ((head . parseMzML . serializeSpectrum) input) input
 
 serializeSpectrum :: Spectrum -> BL.ByteString
 serializeSpectrum = BL.pack . ppElement . spectrum2Xml
@@ -59,7 +60,7 @@ mzBinaryArray spectrum =
 intBinaryArray :: Spectrum -> Element
 intBinaryArray spectrum =
     let eBinaryArray = mzBinaryArray
-        eBinaryInt = newElem "binary" [] [createBinaryContent (spectrum ^. spIntensity) Float]
+        eBinaryInt = newElem "binary" [] [createBinaryContent (spectrum ^. spIntensity) Double]
         cvParamIntNameAttrs = [attr "accession" "MS:1000515", attr "name" "intensity array"]
         cvParamIntTypeAttrs = [attr "accession" "MS:1000521", attr "name" "32-bit float"]
         cvParamsInt = map Elem [ newElem "cvParam" cvParamIntNameAttrs []
@@ -82,26 +83,25 @@ putValues :: [Double] -> EncodingType -> Put
 putValues xs Float = mapM_ (putFloatle . double2Float) xs
 putValues xs Double = mapM_ putDoublele xs
 
-cmpSpec :: Spectrum -> Spectrum -> Double -> Bool
-cmpSpec lhs rhs epsilon =
+cmpSpec :: Spectrum -> Spectrum -> Bool
+cmpSpec lhs rhs =
     let mzLen = length (lhs ^. spMz) == length (rhs ^. spMz)
         mzInt = length (lhs ^. spIntensity) == length (rhs ^. spIntensity)
         eqLen = mzLen && mzInt
         eqId = (lhs ^. spId) == (rhs ^. spId)
     in if eqLen && eqId
-        then let eqMz = cmpDoubles (lhs ^. spMz) (rhs ^. spMz) epsilon
-                 eqInt = cmpDoubles (lhs ^. spIntensity) (rhs ^. spIntensity) epsilon
+        then let eqMz = cmpDoubles (lhs ^. spMz) (rhs ^. spMz)
+                 eqInt = cmpDoubles (lhs ^. spIntensity) (rhs ^. spIntensity)
               in eqMz && eqInt
         else False
 
-cmpDoubles :: [Double] -> [Double] -> Double -> Bool
-cmpDoubles [] [] _ = True
-cmpDoubles (l:ls) (r:rs) epsilon =
-    if cmpDouble l r epsilon
-    then cmpDoubles ls rs epsilon
+cmpDoubles :: [Double] -> [Double] -> Bool
+cmpDoubles [] [] = True
+cmpDoubles (l:ls) (r:rs) =
+    if cmpDouble l r
+    then cmpDoubles ls rs
     else False
 
-cmpDouble :: Double -> Double -> Double -> Bool
-cmpDouble lhs rhs epsilon =
-    abs (lhs - rhs) <= epsilon
+cmpDouble :: Double -> Double -> Bool
+cmpDouble lhs rhs = lhs ~== rhs
 

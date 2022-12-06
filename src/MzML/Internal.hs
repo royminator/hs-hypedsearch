@@ -1,5 +1,5 @@
-module MzML
-    ( parseMzML
+module MzML.Internal
+    ( module MzML.Internal
     ) where
 
 import Text.XML.Light
@@ -21,12 +21,6 @@ propAccessions = ["MS:1000515", "MS:1000514"]
 
 typeAccessions :: [String]
 typeAccessions = ["MS:1000521", "MS:1000523"]
-
-parseMzML :: BL.ByteString -> [Spectrum]
-parseMzML contents =
-    let spectrumList = parseXMLDoc contents
-            >>= filterElementName (qNameEq "spectrumList")
-    in maybe [] parseSpectrumList spectrumList
 
 qNameEq :: String -> QName -> Bool
 qNameEq n (QName qn _ _) = n == qn

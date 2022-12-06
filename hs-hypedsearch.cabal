@@ -28,7 +28,8 @@ library
       Config
       Domain
       Fasta
-      MzML
+      MzML.Internal
+      MzML.Parser
   other-modules:
       Paths_hs_hypedsearch
   hs-source-dirs:
@@ -41,6 +42,7 @@ library
     , bytestring
     , containers
     , errors
+    , ieee754
     , microlens
     , microlens-th
     , xml
@@ -62,6 +64,7 @@ executable hs-hypedsearch-exe
     , containers
     , errors
     , hs-hypedsearch
+    , ieee754
     , microlens
     , microlens-th
     , xml
@@ -87,8 +90,11 @@ test-suite hs-hypedsearch-test
     , errors
     , hs-hypedsearch
     , hspec
+    , ieee754
     , microlens
     , microlens-th
+    , tasty
+    , tasty-hspec
     , xml
     , yaml
   default-language: Haskell2010

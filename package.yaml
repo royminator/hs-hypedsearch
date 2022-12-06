@@ -30,6 +30,7 @@ dependencies:
 - binary
 - containers
 - errors
+- ieee754
 
 ghc-options:
 - -Wall
@@ -66,5 +67,8 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - hs-hypedsearch
-    - hspec
+    - tasty
+    - tasty-hspec
     - QuickCheck
+    - hspec
+    # tasty-hedgehog
