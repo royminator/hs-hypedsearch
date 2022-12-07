@@ -69,6 +69,6 @@ tests:
     - hs-hypedsearch
     - tasty
     - tasty-hspec
-    - QuickCheck
     - hspec
-    # tasty-hedgehog
+    - hedgehog
+    - tasty-hedgehog

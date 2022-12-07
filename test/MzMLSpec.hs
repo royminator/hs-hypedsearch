@@ -1,11 +1,13 @@
 module MzMLSpec
-    ( mzMLSpec
+    ( mzMLProps
     ) where
 
-import MzML
-import Test.Hspec
-import Test.QuickCheck
-import Test.QuickCheck.Gen
+import MzML.Internal
+import Test.Tasty
+import Test.Tasty.Hedgehog
+import Hedgehog
+import qualified Hedgehog.Gen as Gen
+import qualified Hedgehog.Range as Range
 import qualified Data.ByteString.Lazy.Char8 as BL
 import qualified Data.ByteString.Base64.Lazy as B64
 import Text.XML.Light
@@ -13,27 +15,41 @@ import Domain
 import Lens.Micro
 import Data.Binary
 import Data.Binary.Put
-import GHC.Float (double2Float)
-import Data.AEq
 
-data EncodingType = Float | Double
+mzMLProps :: [TestTree]
+mzMLProps = [ testProperty "encoded and decoded [F32] equals input" prop_encodeDecodeF32 ]
 
-instance Arbitrary Spectrum where
-    arbitrary = do
-        ident <- listOf1 $ elements ['a'..'z']
-        mz <- listOf1 arbitrary
-        intensity <- listOf1 arbitrary
-        pure $ Spectrum ident mz intensity
+prop_encodeDecodeF32 :: Property
+prop_encodeDecodeF32 = property $ do
+    floats <- forAll $ Gen.list (Range.linear 0 100) genF32
+    let bin = BinaryData (encodeAsBinary floats) Float
+        decoded = decodeBinaryData bin
+    decoded === Just floats
 
-mzMLSpec :: Spec
-mzMLSpec =
+genF32 :: Gen F
+genF32 = do
+    let (min, max) = (-99 :: Float, 99 :: Float)
+    f <- Gen.float $ Range.linearFrac min max
+    pure $ F32 f
+
+encodeAsBinary :: [F] -> BL.ByteString
+encodeAsBinary xs = runPut $ putValues xs
+
+putValues :: [F] -> Put
+putValues = mapM_ putValue
+
+putValue :: F -> Put
+putValue (F32 f) = putFloatle f
+putValue (F64 f) = putDoublele f
+
+    {-
     describe "parseMzML" $ do
         it "returns the parsed version of the spectrum XML" $ property
             prop_parseMzML_parsedEqualsDeserializedInput
 
 prop_parseMzML_parsedEqualsDeserializedInput :: Spectrum -> Bool
 prop_parseMzML_parsedEqualsDeserializedInput input =
-    cmpSpec ((head . parseMzML . serializeSpectrum) input) input
+    (head . parseMzML . serializeSpectrum) input == input
 
 serializeSpectrum :: Spectrum -> BL.ByteString
 serializeSpectrum = BL.pack . ppElement . spectrum2Xml
@@ -49,7 +65,7 @@ spectrum2Xml spectrum =
 
 mzBinaryArray :: Spectrum -> Element
 mzBinaryArray spectrum =
-    let eBinaryMz = newElem "binary" [] [createBinaryContent (spectrum ^. spMz) Double]
+    let eBinaryMz = newElem "binary" [] [createBinaryContent (spectrum ^. spMz)]
         cvParamMzNameAttrs = [attr "accession" "MS:1000514", attr "name" "m/z array"]
         cvParamMzTypeAttrs = [attr "accession" "MS:1000523", attr "name" "64-bit float"]
         cvParamsMz = map Elem [ newElem "cvParam" cvParamMzNameAttrs []
@@ -60,7 +76,7 @@ mzBinaryArray spectrum =
 intBinaryArray :: Spectrum -> Element
 intBinaryArray spectrum =
     let eBinaryArray = mzBinaryArray
-        eBinaryInt = newElem "binary" [] [createBinaryContent (spectrum ^. spIntensity) Double]
+        eBinaryInt = newElem "binary" [] [createBinaryContent (spectrum ^. spIntensity)]
         cvParamIntNameAttrs = [attr "accession" "MS:1000515", attr "name" "intensity array"]
         cvParamIntTypeAttrs = [attr "accession" "MS:1000521", attr "name" "32-bit float"]
         cvParamsInt = map Elem [ newElem "cvParam" cvParamIntNameAttrs []
@@ -73,15 +89,8 @@ attr name value = Attr (unqual name) value
 
 newElem name attribs children = Element (unqual name) attribs children Nothing
 
-createBinaryContent :: [Double] -> EncodingType -> Content
-createBinaryContent xs t = Text $ CData CDataRaw (BL.unpack (encodeAsBinary xs t)) Nothing
-
-encodeAsBinary :: [Double] -> EncodingType -> BL.ByteString
-encodeAsBinary xs t = B64.encode (runPut (putValues xs t))
-
-putValues :: [Double] -> EncodingType -> Put
-putValues xs Float = mapM_ (putFloatle . double2Float) xs
-putValues xs Double = mapM_ putDoublele xs
+createBinaryContent :: [F] -> Content
+createBinaryContent xs = Text $ CData CDataRaw (BL.unpack (encodeAsBinary xs)) Nothing
 
 cmpSpec :: Spectrum -> Spectrum -> Bool
 cmpSpec lhs rhs =
@@ -104,4 +113,4 @@ cmpDoubles (l:ls) (r:rs) =
 
 cmpDouble :: Double -> Double -> Bool
 cmpDouble lhs rhs = lhs ~== rhs
-
+-}

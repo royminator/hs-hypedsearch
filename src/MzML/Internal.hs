@@ -13,8 +13,8 @@ import qualified Data.Binary.Get as Bin
 import qualified Data.ByteString.Base64.Lazy as B64
 import GHC.Float (float2Double)
 
-data BinDataType = Float | Double
-data BinaryData = BinaryData BL.ByteString BinDataType
+data BinDataType = Float | Double deriving Show
+data BinaryData = BinaryData BL.ByteString BinDataType deriving Show
 
 propAccessions :: [String]
 propAccessions = ["MS:1000515", "MS:1000514"]
