@@ -18,5 +18,6 @@ main = do
 
     mzMLContent <- BL.readFile spectrumFile
     let spectra = MzML.parseMzML mzMLContent
+    print $ head spectra
     putStrLn "exited"
 

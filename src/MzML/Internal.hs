@@ -5,12 +5,13 @@ module MzML.Internal
 import Text.XML.Light
 import Domain
 import Prelude hiding (lookup)
-import Data.Maybe (mapMaybe)
+import Data.Maybe (mapMaybe, listToMaybe)
 import Data.Map hiding (mapMaybe, foldl, filter, map)
 import Control.Error.Util (hush)
 import qualified Data.ByteString.Lazy.Char8 as BL
 import qualified Data.Binary.Get as Bin
 import qualified Data.ByteString.Base64.Lazy as B64
+import Text.Read (readMaybe)
 
 data BinDataType = Float | Double deriving Show
 data BinaryData = BinaryData BL.ByteString BinDataType deriving Show
@@ -20,6 +21,12 @@ propAccessions = ["MS:1000515", "MS:1000514"]
 
 typeAccessions :: [String]
 typeAccessions = ["MS:1000521", "MS:1000523"]
+
+precursorMassAccessions :: [String]
+precursorMassAccessions = ["MS:1000744"]
+
+precursorChargeAccessions :: [String]
+precursorChargeAccessions = ["MS:1000041"]
 
 qNameEq :: String -> QName -> Bool
 qNameEq n (QName qn _ _) = n == qn
@@ -36,6 +43,7 @@ parseSpectrum e =
         <$> getSpectrumId e
         <*> (lookup "m/z array" bin >>= decodeBinaryData)
         <*> (lookup "intensity array" bin >>= decodeBinaryData)
+        <*> getPrecursor e
 
 parseBinaryArrayList :: Maybe Element -> Map String BinaryData
 parseBinaryArrayList (Just e) = foldl parseBinaryData empty (elChildren e)
@@ -54,29 +62,37 @@ getSpectrumId :: Element -> Maybe String
 getSpectrumId = findAttr (unqual "id")
 
 getPropertyName :: [Element] -> Maybe String
-getPropertyName es = getAccessionName es propAccessions
+getPropertyName es = getAccessionProp es propAccessions "name"
 
 getBinDataType :: [Element] -> Maybe BinDataType
 getBinDataType es =
-    getAccessionName es typeAccessions >>= stringToBinaryType
+    getAccessionProp es typeAccessions "name" >>= stringToBinaryType
+
+getPrecursorMassValue :: [Element] -> Maybe Double
+getPrecursorMassValue es =
+    getAccessionProp es precursorMassAccessions "value" >>= readMaybe
+
+getPrecursorChargeValue :: [Element] -> Maybe Int
+getPrecursorChargeValue es =
+    getAccessionProp es precursorChargeAccessions "value" >>= readMaybe
 
 stringToBinaryType :: String -> Maybe BinDataType
 stringToBinaryType "64-bit float" = pure Double
 stringToBinaryType "32-bit float" = pure Float
 stringToBinaryType _ = Nothing
 
-getAccessionName :: [Element] -> [String] -> Maybe String
-getAccessionName [] _ = Nothing
-getAccessionName (e:es) acc =
-    let prop = findAttr (unqual "accession") e >>= getNameIfHasAccession e acc
+getAccessionProp :: [Element] -> [String] -> String -> Maybe String
+getAccessionProp [] _ _ = Nothing
+getAccessionProp (e:es) acc propName =
+    let prop = findAttr (unqual "accession") e >>= getPropIfHasAccession propName e acc
     in case prop of
         Just _ -> prop
-        _ -> getAccessionName es acc
+        _ -> getAccessionProp es acc propName
 
-getNameIfHasAccession :: Element -> [String] -> String -> Maybe String
-getNameIfHasAccession e accs acc =
+getPropIfHasAccession :: String -> Element -> [String] -> String -> Maybe String
+getPropIfHasAccession propName e accs acc =
     if acc `elem` accs
-    then findAttr (unqual "name") e
+    then findAttr (unqual propName) e
     else Nothing
 
 getBinaryData :: Element -> Maybe BL.ByteString
@@ -113,3 +129,22 @@ decodeBytesToFloating decoder = do
             vals <- decodeBytesToFloating decoder
             return (val:vals)
 
+getPrecursor :: Element -> Maybe Precursor
+getPrecursor eSpec =
+    filterElementName (qNameEq "precursorList") eSpec
+    >>= listToMaybe . elChildren
+    >>= parsePrecursor
+    
+parsePrecursor :: Element -> Maybe Precursor
+parsePrecursor ePrec =
+    let eIon = filterElementName (qNameEq "selectedIonList") ePrec
+                >>= listToMaybe . elChildren
+        mass = eIon >>= parsePrecursorMass
+        charge = eIon >>= parsePrecursorCharge
+    in Precursor <$> mass <*> charge
+
+parsePrecursorMass :: Element -> Maybe Double
+parsePrecursorMass = getPrecursorMassValue . elChildren
+
+parsePrecursorCharge :: Element -> Maybe Int
+parsePrecursorCharge = getPrecursorChargeValue . elChildren
