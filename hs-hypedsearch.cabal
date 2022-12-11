@@ -42,7 +42,6 @@ library
     , bytestring
     , containers
     , errors
-    , ieee754
     , microlens
     , microlens-th
     , xml
@@ -64,7 +63,6 @@ executable hs-hypedsearch-exe
     , containers
     , errors
     , hs-hypedsearch
-    , ieee754
     , microlens
     , microlens-th
     , xml
@@ -90,7 +88,6 @@ test-suite hs-hypedsearch-test
     , hedgehog
     , hs-hypedsearch
     , hspec
-    , ieee754
     , microlens
     , microlens-th
     , tasty

@@ -3,7 +3,6 @@ module Main
     ) where
 
 import Test.Tasty
-import Test.Tasty.Hedgehog
 import MzMLSpec
 
 main :: IO ()

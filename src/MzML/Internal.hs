@@ -11,7 +11,6 @@ import Control.Error.Util (hush)
 import qualified Data.ByteString.Lazy.Char8 as BL
 import qualified Data.Binary.Get as Bin
 import qualified Data.ByteString.Base64.Lazy as B64
-import GHC.Float (float2Double)
 
 data BinDataType = Float | Double deriving Show
 data BinaryData = BinaryData BL.ByteString BinDataType deriving Show

@@ -30,7 +30,6 @@ dependencies:
 - binary
 - containers
 - errors
-- ieee754
 
 ghc-options:
 - -Wall
