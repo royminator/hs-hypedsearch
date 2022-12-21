@@ -9,8 +9,7 @@ import FilteringSpec
 
 main :: IO ()
 main = do
-    specs <- testSpecs filteringSpecs
-
+    specs <- concat <$> mapM testSpecs [peakFilterSpecs, relativeAbundanceFilterSpecs]
     defaultMain ( testGroup "All tests"
                     [ testGroup "MzML Properties" mzMLProps
                     , testGroup "Filtering Specs" specs

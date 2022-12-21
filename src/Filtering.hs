@@ -24,11 +24,11 @@ takePeaks n s =
             zip (s^.spMz) (s^.spIntensity)
     in Spectrum (s^.spId) masses intensities (s^.spPrecursor)
 
-relativeAbundanceFilter :: Floating a => a -> Spectrum -> Spectrum
-relativeAbundanceFilter f s = undefined
-{-
-    let totalIntensity = sum s^.spIntensity
-        minVal = totalIntensity * f
-        (masses, intensities) = filter (\(_, i) -> i >= minVal) $ zip (s^.spMz) (s^.spIntensity)
+relativeAbundanceFilter :: Double -> Spectrum -> Spectrum
+relativeAbundanceFilter d s =
+    let minVal = d * sum (s^.spIntensity)
+        (masses, intensities) = unzip $
+            filter (\(_, i) -> i >= minVal) $
+            zip (s^.spMz) (s^.spIntensity)
     in Spectrum (s^.spId) masses intensities (s^.spPrecursor)
--}
+

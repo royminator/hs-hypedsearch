@@ -24,7 +24,7 @@ data ConfigInput = ConfigInput
 
 data ConfigSpectraFiltering = ConfigSpectraFiltering
     { _cfNumPeaks :: Int
-    , _cfRelativeAbundance :: Float
+    , _cfRelativeAbundance :: Double
     } deriving (Show, Generic)
 
 instance FromJSON Config where

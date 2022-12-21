@@ -2,12 +2,11 @@ module Main (main) where
 
 import Data.Yaml.Config
 import Config
--- import qualified Filtering as F
+import qualified Filtering as F
 import Lens.Micro
 import qualified Fasta
 import qualified MzML.Parser as MzML
 import qualified Data.ByteString.Lazy.Char8 as BL
-import Domain
 
 main :: IO ()
 main = do
@@ -20,6 +19,6 @@ main = do
 
     mzMLContent <- BL.readFile spectrumFile
     let spectra = MzML.parseMzML mzMLContent
-    print $ head spectra
+    print $ F.applyFilter (F.takePeaks 25) (head spectra)
     putStrLn "exited"
 
