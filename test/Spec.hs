@@ -3,11 +3,16 @@ module Main
     ) where
 
 import Test.Tasty
+import Test.Tasty.Hspec
 import MzMLSpec
+import FilteringSpec
 
 main :: IO ()
 main = do
-    defaultMain ( testGroup "All tests" [
-                    testGroup "Properties" mzMLProps
-                ])
+    specs <- testSpecs filteringSpecs
+
+    defaultMain ( testGroup "All tests"
+                    [ testGroup "MzML Properties" mzMLProps
+                    , testGroup "Filtering Specs" specs
+                    ])
 

@@ -28,6 +28,7 @@ library
       Config
       Domain
       Fasta
+      Filtering
       MzML.Internal
       MzML.Parser
   other-modules:
@@ -73,6 +74,7 @@ test-suite hs-hypedsearch-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      FilteringSpec
       MzMLSpec
       Paths_hs_hypedsearch
   hs-source-dirs:

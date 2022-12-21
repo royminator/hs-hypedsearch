@@ -12,6 +12,7 @@ import qualified Data.ByteString.Lazy.Char8 as BL
 import qualified Data.Binary.Get as Bin
 import qualified Data.ByteString.Base64.Lazy as B64
 import Text.Read (readMaybe)
+import GHC.Float (float2Double)
 
 data BinDataType = Float | Double deriving Show
 data BinaryData = BinaryData BL.ByteString BinDataType deriving Show
@@ -110,15 +111,15 @@ getElementText e =
 binStringToByteString :: String -> Maybe BL.ByteString
 binStringToByteString = hush . B64.decode . BL.pack
 
-decodeBinaryData :: BinaryData -> Maybe [F]
+decodeBinaryData :: BinaryData -> Maybe [Double]
 decodeBinaryData (BinaryData bytes Float) = pure $ runGetFloat bytes
 decodeBinaryData (BinaryData bytes Double) = pure $ runGetDouble bytes
 
-runGetFloat :: BL.ByteString -> [F]
-runGetFloat = map F32 . Bin.runGet (decodeBytesToFloating Bin.getFloatle)
+runGetFloat :: BL.ByteString -> [Double]
+runGetFloat = map float2Double . Bin.runGet (decodeBytesToFloating Bin.getFloatle)
 
-runGetDouble :: BL.ByteString -> [F]
-runGetDouble = map F64 . Bin.runGet (decodeBytesToFloating Bin.getDoublele)
+runGetDouble :: BL.ByteString -> [Double]
+runGetDouble = Bin.runGet (decodeBytesToFloating Bin.getDoublele)
 
 decodeBytesToFloating :: Floating a => Bin.Get a -> Bin.Get [a]
 decodeBytesToFloating decoder = do

@@ -2,10 +2,12 @@ module Main (main) where
 
 import Data.Yaml.Config
 import Config
+-- import qualified Filtering as F
 import Lens.Micro
 import qualified Fasta
 import qualified MzML.Parser as MzML
 import qualified Data.ByteString.Lazy.Char8 as BL
+import Domain
 
 main :: IO ()
 main = do

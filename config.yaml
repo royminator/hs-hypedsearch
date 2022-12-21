@@ -1,3 +1,7 @@
 input:
   protein_file: "/var/data/proteins/prot_274.fasta"
   spectrum_file: "/var/data/spectra/NOD2_E3.mzML"
+
+spectra_filtering:
+  num_peaks: 25
+  relative_abundance: 0.01
