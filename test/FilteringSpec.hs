@@ -11,13 +11,13 @@ peakFilterSpecs :: Spec
 peakFilterSpecs =
     describe "takePeaks" $ do
         it "returns spectrum with highest intensity peaks" $
-            shouldBe (applyFilter (takePeaks 2) dummySpec) peakFilteredSpec
+            shouldBe (takePeaks 2 dummySpec) peakFilteredSpec
 
 relativeAbundanceFilterSpecs :: Spec
 relativeAbundanceFilterSpecs =
     describe "relativeAbundanceFilter" $ do
         it "returns mass/intensity where intensity >= 0.25 * sum intensity == 49.45" $
-            shouldBe (applyFilter (relativeAbundanceFilter 0.25) dummySpec) relAbFilteredSpec
+            shouldBe (relativeAbundanceFilter 0.25 dummySpec) relAbFilteredSpec
 
 dummySpec :: Spectrum
 dummySpec =

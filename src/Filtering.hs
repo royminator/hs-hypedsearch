@@ -8,9 +8,6 @@ import Data.List (sortBy)
 import Data.Ord (comparing)
 import Lens.Micro
 
-applyFilter :: (Spectrum -> Spectrum) -> Spectrum -> Spectrum
-applyFilter f = f
-
 getSpectraFilter :: ConfigSpectraFiltering -> (Spectrum -> Spectrum)
 getSpectraFilter (ConfigSpectraFiltering 0 f) = relativeAbundanceFilter f
 getSpectraFilter (ConfigSpectraFiltering n _) = takePeaks n

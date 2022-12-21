@@ -19,6 +19,6 @@ main = do
 
     mzMLContent <- BL.readFile spectrumFile
     let spectra = MzML.parseMzML mzMLContent
-    print $ F.applyFilter (F.takePeaks 25) (head spectra)
+    print $ F.relativeAbundanceFilter 0.01 (head spectra)
     putStrLn "exited"
 
