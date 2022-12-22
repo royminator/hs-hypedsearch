@@ -11,8 +11,8 @@ import qualified Data.ByteString.Lazy.Char8 as BL
 main :: IO ()
 main = do
     config <- loadYamlSettings ["config.yaml"] [] useEnv :: IO Config
-    let fastaFile = config ^. cfgInput . ciProteinFile
-    let spectrumFile = config ^. cfgInput . ciSpectrumFile
+    let fastaFile = config^.cfgInput.ciProteinFile
+    let spectrumFile = config^.cfgInput.ciSpectrumFile
 
     fastaContent <- readFile fastaFile
     let fasta = Fasta.parseFasta fastaContent
