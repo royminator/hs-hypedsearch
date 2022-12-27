@@ -13,38 +13,53 @@ import Control.Applicative
 import Lens.Micro.TH
 
 data Config = Config
-    { _cfgInput :: ConfigInput
-    , _cfgSpectraFiltering :: ConfigSpectraFiltering
+    { _input :: Input
+    , _spectraFiltering :: SpectraFiltering
     } deriving (Show, Generic)
 
-data ConfigInput = ConfigInput
-    { _ciProteinFile :: FilePath
-    , _ciSpectrumFile :: FilePath
+data Input = Input
+    { _proteinFile :: FilePath
+    , _spectrumFile :: FilePath
     } deriving (Show, Generic)
 
-data ConfigSpectraFiltering = ConfigSpectraFiltering
-    { _cfNumPeaks :: Int
-    , _cfRelativeAbundance :: Double
+data SpectraFiltering = SpectraFiltering
+    { _numPeaks :: Int
+    , _relativeAbundance :: Double
     } deriving (Show, Generic)
+
+{-
+data SearchParams = SearchParams
+    { _minPeptideLen :: Int
+    , _maxPeptideLen :: Int
+    , _ppmTolerance :: Int
+    , _precursorTolerance :: Int
+    } deriving (Show, Generic)
+-}
 
 instance FromJSON Config where
     parseJSON (Object o) = Config <$> o .: "input" <*> o .: "spectra_filtering"
     parseJSON _ = empty
 
-instance FromJSON ConfigInput where
+instance FromJSON Input where
     parseJSON (Object o) = do
-        _ciProteinFile <- o .: "protein_file"
-        _ciSpectrumFile <- o .: "spectrum_file"
-        return ConfigInput {..}
+        _proteinFile <- o .: "protein_file"
+        _spectrumFile <- o .: "spectrum_file"
+        return Input {..}
     parseJSON _ = empty
 
-instance FromJSON ConfigSpectraFiltering where
+instance FromJSON SpectraFiltering where
     parseJSON (Object o) = do
-        _cfNumPeaks <- o .: "num_peaks"
-        _cfRelativeAbundance <- o .: "relative_abundance"
-        return ConfigSpectraFiltering {..}
+        _numPeaks <- o .: "num_peaks"
+        _relativeAbundance <- o .: "relative_abundance"
+        return SpectraFiltering {..}
     parseJSON _ = empty
 
+{-
+instance FromJSON SearchParams where
+    parseJSON (Object o) = do
+        _minPept
+-}
 makeLenses ''Config
-makeLenses ''ConfigInput
-makeLenses ''ConfigSpectraFiltering
+makeLenses ''Input
+makeLenses ''SpectraFiltering
+-- makeLenses ''SearchParams
