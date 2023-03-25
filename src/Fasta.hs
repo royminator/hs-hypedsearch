@@ -16,24 +16,24 @@ data Sequence a = Sequence
     , _seqData :: [a]
     } deriving (Show)
 
-newtype FastaReport = FastaReport
+newtype Report = Report
     { _frSequences :: [Sequence AminoAcid]
     } deriving (Show)
 
-makeLenses ''FastaReport
+makeLenses ''Report
 makeLenses ''Sequence
 
-parseFasta :: String -> FastaReport
+parseFasta :: String -> Report
 parseFasta content =
-    foldl parseFile (FastaReport []) (lines content)
+    foldl parseFile (Report []) (lines content)
 
-parseFile :: FastaReport -> String -> FastaReport
+parseFile :: Report -> String -> Report
 parseFile rep line = do
     let newRep = addSeqIfNew rep line
         updated = parseLine (last (newRep ^. frSequences)) line
     set (frSequences . _last) updated newRep
 
-addSeqIfNew :: FastaReport -> String -> FastaReport
+addSeqIfNew :: Report -> String -> Report
 addSeqIfNew rep ('>':_) = over frSequences (++ [Sequence "" []]) rep
 addSeqIfNew rep _ = rep
 

@@ -3,9 +3,9 @@ module FilteringSpec
     , relativeAbundanceFilterSpecs
     ) where
 
-import Test.Hspec
-import Domain
-import Filtering
+import           Domain
+import           Filtering
+import           Test.Hspec
 
 peakFilterSpecs :: Spec
 peakFilterSpecs =
@@ -21,11 +21,11 @@ relativeAbundanceFilterSpecs =
 
 dummySpec :: Spectrum
 dummySpec =
-    Spectrum "dummy" 
+    Spectrum "dummy"
         [3, 8.9, 5.2, 4.3] [8.8, 39, 52, 98]
         (Precursor 4 8)
 
-peakFilteredSpec :: Spectrum 
+peakFilteredSpec :: Spectrum
 peakFilteredSpec =
     Spectrum "dummy"
         [4.3, 5.2] [98, 52]
@@ -36,4 +36,4 @@ relAbFilteredSpec =
     Spectrum "dummy"
         [5.2, 4.3] [52, 98]
         (Precursor 4 8)
-        
+

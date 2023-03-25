@@ -2,25 +2,25 @@ module MzMLSpec
     ( mzMLProps
     ) where
 
-import MzML.Internal
-import qualified MzML.Parser as MzML
-import Test.Tasty
-import Test.Tasty.Hedgehog
-import Hedgehog
-import qualified Hedgehog.Gen as Gen
-import qualified Hedgehog.Range as Range
-import qualified Data.ByteString.Lazy.Char8 as BL
+import           Data.Binary
+import           Data.Binary.Put
 import qualified Data.ByteString.Base64.Lazy as B64
-import Domain
-import Lens.Micro
-import Data.Binary
-import Data.Binary.Put
-import Text.Printf
-import GHC.Float (float2Double, double2Float)
+import qualified Data.ByteString.Lazy.Char8  as BL
+import           Domain
+import           GHC.Float                   (double2Float, float2Double)
+import           Hedgehog
+import qualified Hedgehog.Gen                as Gen
+import qualified Hedgehog.Range              as Range
+import           Lens.Micro
+import           MzML.Internal
+import qualified MzML.Parser                 as MzML
+import           Test.Tasty
+import           Test.Tasty.Hedgehog
+import           Text.Printf
 
 mzMLProps :: [TestTree]
 mzMLProps = [ testProperty "encoded and decoded [Float] equals input" prop_encodeDecodeFloat
-            , testProperty "verify parsed then serialized spectrum equals input" prop_serializeParseMzML 
+            , testProperty "verify parsed then serialized spectrum equals input" prop_serializeParseMzML
             ]
 
 prop_encodeDecodeFloat :: Property
@@ -59,7 +59,7 @@ genPrecursor = do
     mass <- Gen.double $ Range.linearFrac (-10000.0 :: Double) (10000.0 :: Double)
     charge <- Gen.int $ Range.linear (-999999 :: Int) (999999 :: Int)
     pure $ Precursor mass charge
-    
+
 encodeAsBinaryF :: [Float] -> BL.ByteString
 encodeAsBinaryF = runPut . mapM_ putFloatle
 

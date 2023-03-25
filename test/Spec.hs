@@ -2,10 +2,10 @@ module Main
     ( main
     ) where
 
-import Test.Tasty
-import Test.Tasty.Hspec
-import MzMLSpec
-import FilteringSpec
+import           FilteringSpec
+import           MzMLSpec
+import           Test.Tasty
+import           Test.Tasty.Hspec
 
 main :: IO ()
 main = do

@@ -1,7 +1,10 @@
-module Aligment
+module Alignment
     ( createHits
     ) where
 
-createHits :: [Spectrum] -> Fasta.FastaReport -> [KMerHit]
-createHits specs fr = 
+import Domain
+import qualified Fasta
+
+createHits :: [Spectrum] -> Fasta.Report -> Int
+createHits specs fr = undefined
 
