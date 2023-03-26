@@ -2,6 +2,7 @@ module MzMLSpec
     ( mzMLProps
     ) where
 
+import Prelude hiding (id)
 import           Data.Binary
 import           Data.Binary.Put
 import qualified Data.ByteString.Base64.Lazy as B64
@@ -57,8 +58,16 @@ genFloat =
 genPrecursor :: Gen Precursor
 genPrecursor = do
     mass <- Gen.double $ Range.linearFrac (-10000.0 :: Double) (10000.0 :: Double)
-    charge <- Gen.int $ Range.linear (-999999 :: Int) (999999 :: Int)
+    charge <- genCharge
     pure $ Precursor mass charge
+
+genCharge :: Gen Charge
+genCharge = do
+    chargeInt <- Gen.int $ Range.linear (0 :: Int) (1 :: Int)
+    pure $ int2Charge chargeInt
+    where
+        int2Charge 0 = Singly
+        int2Charge 1 = Doubly
 
 encodeAsBinaryF :: [Float] -> BL.ByteString
 encodeAsBinaryF = runPut . mapM_ putFloatle
@@ -68,11 +77,11 @@ encodeAsBinaryD = runPut . mapM_ putDoublele
 
 serializeSpectrum :: Spectrum -> BL.ByteString
 serializeSpectrum spec =
-    let ident = spec^.spId
-        mz = B64.encode $ encodeAsBinaryD $ spec^.spMz
-        intensity = B64.encode $ encodeAsBinaryF $ map double2Float $ spec^.spIntensity
-        precMass = spec^.spPrecursor.pcMass
-        precCharge = spec^.spPrecursor.pcCharge
+    let ident = spec^.id
+        masses = B64.encode $ encodeAsBinaryD $ spec^.mz
+        abundances = B64.encode $ encodeAsBinaryF $ map double2Float $ spec^.abundance
+        precMass = spec^.precursor.mass
+        precCharge = charge2Int $ spec^.precursor.charge
     in BL.pack $ printf
     "<mzML>\
         \<run>\
@@ -113,6 +122,9 @@ serializeSpectrum spec =
     ident
     (show precMass)
     (show precCharge)
-    (BL.unpack mz)
-    (BL.unpack intensity)
+    (BL.unpack masses)
+    (BL.unpack abundances)
+    where
+        charge2Int Singly = 1
+        charge2Int Doubly = 2
 

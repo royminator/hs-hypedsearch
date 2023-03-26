@@ -1,18 +1,38 @@
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE DuplicateRecordFields #-}
+
 module MzML.Internal
     ( module MzML.Internal
     ) where
 
-import Text.XML.Light
-import Domain
-import Prelude hiding (lookup)
-import Data.Maybe (mapMaybe, listToMaybe)
-import Data.Map hiding (mapMaybe, foldl, filter, map)
-import Control.Error.Util (hush)
-import qualified Data.ByteString.Lazy.Char8 as BL
-import qualified Data.Binary.Get as Bin
+import           Control.Error.Util          (hush)
+import qualified Data.Binary.Get             as Bin
 import qualified Data.ByteString.Base64.Lazy as B64
-import Text.Read (readMaybe)
-import GHC.Float (float2Double)
+import qualified Data.ByteString.Lazy.Char8  as BL
+import           Data.Map                    hiding (filter, foldl, map,
+                                              mapMaybe)
+import           Data.Maybe                  (listToMaybe, mapMaybe)
+import           Domain
+import           GHC.Float                   (float2Double)
+import           Lens.Micro.TH               (makeLenses)
+import           Prelude                     hiding (lookup)
+import           Text.Read                   (readMaybe)
+import           Text.XML.Light
+
+data Precursor = Precursor
+    { _mass   :: Mass
+    , _charge :: Charge
+    } deriving (Show, Eq)
+
+data Spectrum = Spectrum
+    { _id        :: String
+    , _mz        :: [Double]
+    , _abundance :: [Double]
+    , _precursor :: Precursor
+    } deriving (Show, Eq)
+
+makeLenses ''Spectrum
+makeLenses ''Precursor
 
 data BinDataType = Float | Double deriving Show
 data BinaryData = BinaryData BL.ByteString BinDataType deriving Show
@@ -48,7 +68,7 @@ parseSpectrum e =
 
 parseBinaryArrayList :: Maybe Element -> Map String BinaryData
 parseBinaryArrayList (Just e) = foldl parseBinaryData empty (elChildren e)
-parseBinaryArrayList _ = empty
+parseBinaryArrayList _        = empty
 
 parseBinaryData :: Map String BinaryData -> Element -> Map String BinaryData
 parseBinaryData orig e =
@@ -57,7 +77,7 @@ parseBinaryData orig e =
     in addBin (getPropertyName cvParams) bin orig
     where
         addBin (Just name) (Just bin) m = insert name bin m
-        addBin _ _ m = m
+        addBin _ _ m                    = m
 
 getSpectrumId :: Element -> Maybe String
 getSpectrumId = findAttr (unqual "id")
@@ -73,14 +93,19 @@ getPrecursorMassValue :: [Element] -> Maybe Double
 getPrecursorMassValue es =
     getAccessionProp es precursorMassAccessions "value" >>= readMaybe
 
-getPrecursorChargeValue :: [Element] -> Maybe Int
+getPrecursorChargeValue :: [Element] -> Maybe Charge
 getPrecursorChargeValue es =
-    getAccessionProp es precursorChargeAccessions "value" >>= readMaybe
+    getAccessionProp es precursorChargeAccessions "value" >>= readMaybe >>= int2Charge
+    where
+        int2Charge :: Int -> Maybe Charge
+        int2Charge 1 = Just Singly
+        int2Charge 2 = Just Doubly
+        int2Charge _ = Nothing
 
 stringToBinaryType :: String -> Maybe BinDataType
 stringToBinaryType "64-bit float" = pure Double
 stringToBinaryType "32-bit float" = pure Float
-stringToBinaryType _ = Nothing
+stringToBinaryType _              = Nothing
 
 getAccessionProp :: [Element] -> [String] -> String -> Maybe String
 getAccessionProp [] _ _ = Nothing
@@ -88,7 +113,7 @@ getAccessionProp (e:es) acc propName =
     let prop = findAttr (unqual "accession") e >>= getPropIfHasAccession propName e acc
     in case prop of
         Just _ -> prop
-        _ -> getAccessionProp es acc propName
+        _      -> getAccessionProp es acc propName
 
 getPropIfHasAccession :: String -> Element -> [String] -> String -> Maybe String
 getPropIfHasAccession propName e accs acc =
@@ -106,13 +131,13 @@ getElementText :: Element -> Maybe String
 getElementText e =
     case (head . elContent) e of
         Text content -> pure $ cdData content
-        _ -> Nothing
+        _            -> Nothing
 
 binStringToByteString :: String -> Maybe BL.ByteString
 binStringToByteString = hush . B64.decode . BL.pack
 
 decodeBinaryData :: BinaryData -> Maybe [Double]
-decodeBinaryData (BinaryData bytes Float) = pure $ runGetFloat bytes
+decodeBinaryData (BinaryData bytes Float)  = pure $ runGetFloat bytes
 decodeBinaryData (BinaryData bytes Double) = pure $ runGetDouble bytes
 
 runGetFloat :: BL.ByteString -> [Double]
@@ -135,7 +160,7 @@ getPrecursor eSpec =
     filterElementName (qNameEq "precursorList") eSpec
     >>= listToMaybe . elChildren
     >>= parsePrecursor
-    
+
 parsePrecursor :: Element -> Maybe Precursor
 parsePrecursor ePrec =
     let eIon = filterElementName (qNameEq "selectedIonList") ePrec
@@ -147,5 +172,5 @@ parsePrecursor ePrec =
 parsePrecursorMass :: Element -> Maybe Double
 parsePrecursorMass = getPrecursorMassValue . elChildren
 
-parsePrecursorCharge :: Element -> Maybe Int
+parsePrecursorCharge :: Element -> Maybe Charge
 parsePrecursorCharge = getPrecursorChargeValue . elChildren

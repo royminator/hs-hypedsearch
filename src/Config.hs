@@ -27,15 +27,6 @@ data SpectraFiltering = SpectraFiltering
     , _relativeAbundance :: Double
     } deriving (Show, Generic)
 
-{-
-data SearchParams = SearchParams
-    { _minPeptideLen :: Int
-    , _maxPeptideLen :: Int
-    , _ppmTolerance :: Int
-    , _precursorTolerance :: Int
-    } deriving (Show, Generic)
--}
-
 instance FromJSON Config where
     parseJSON (Object o) = Config <$> o .: "input" <*> o .: "spectra_filtering"
     parseJSON _ = empty
@@ -54,12 +45,6 @@ instance FromJSON SpectraFiltering where
         return SpectraFiltering {..}
     parseJSON _ = empty
 
-{-
-instance FromJSON SearchParams where
-    parseJSON (Object o) = do
-        _minPept
--}
 makeLenses ''Config
 makeLenses ''Input
 makeLenses ''SpectraFiltering
--- makeLenses ''SearchParams

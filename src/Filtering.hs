@@ -7,25 +7,23 @@ import Config
 import Data.List (sortBy)
 import Data.Ord (comparing)
 import Lens.Micro
+import Data.Map (keys, elems, fromList, filter)
 
-getSpectraFilter :: SpectraFiltering -> (Spectrum -> Spectrum)
+getSpectraFilter :: SpectraFiltering -> (MassSpectrum -> MassSpectrum)
 getSpectraFilter (SpectraFiltering 0 f) = relativeAbundanceFilter f
 getSpectraFilter (SpectraFiltering n _) = takePeaks n
 
-takePeaks :: Int -> Spectrum -> Spectrum
+takePeaks :: Int -> MassSpectrum -> MassSpectrum
 takePeaks n s =
-    let (masses, intensities) = unzip .
-            sortBy (comparing fst) .
-            take n . 
-            sortBy (flip (comparing snd)) $
-            zip (s^.spMz) (s^.spIntensity)
-    in Spectrum (s^.spId) masses intensities (s^.spPrecursor)
+    fromList
+    . sortBy (comparing fst)
+    . take n
+    . sortBy (flip (comparing snd)) $
+        zip (keys s) (elems s)
 
-relativeAbundanceFilter :: Double -> Spectrum -> Spectrum
+
+relativeAbundanceFilter :: Double -> MassSpectrum -> MassSpectrum
 relativeAbundanceFilter d s =
-    let minVal = d * sum (s^.spIntensity)
-        (masses, intensities) = unzip $
-            filter (\(_, i) -> i >= minVal) $
-            zip (s^.spMz) (s^.spIntensity)
-    in Spectrum (s^.spId) masses intensities (s^.spPrecursor)
+    let minVal = d * sum (elems s)
+    in Data.Map.filter (>= minVal) s
 
