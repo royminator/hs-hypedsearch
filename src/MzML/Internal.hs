@@ -1,4 +1,3 @@
-{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 
 module MzML.Internal
@@ -14,25 +13,21 @@ import           Data.Map                    hiding (filter, foldl, map,
 import           Data.Maybe                  (listToMaybe, mapMaybe)
 import           Domain
 import           GHC.Float                   (float2Double)
-import           Lens.Micro.TH               (makeLenses)
 import           Prelude                     hiding (lookup)
 import           Text.Read                   (readMaybe)
 import           Text.XML.Light
 
 data Precursor = Precursor
-    { _mass   :: Mass
-    , _charge :: Charge
+    { mass   :: Mass
+    , charge :: Charge
     } deriving (Show, Eq)
 
 data Spectrum = Spectrum
-    { _id        :: String
-    , _mz        :: [Double]
-    , _abundance :: [Double]
-    , _precursor :: Precursor
+    { id        :: String
+    , mz        :: [Double]
+    , abundance :: [Double]
+    , precursor :: Precursor
     } deriving (Show, Eq)
-
-makeLenses ''Spectrum
-makeLenses ''Precursor
 
 data BinDataType = Float | Double deriving Show
 data BinaryData = BinaryData BL.ByteString BinDataType deriving Show

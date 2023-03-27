@@ -5,13 +5,25 @@ module Domain
 import           Data.Map
 
 type Mass = Double
+
 type Abundance = Double
+
 type MassSpectrum = Map Mass Abundance
 
 data AminoAcid = A | R | N | D | C | Q | E | G | H | I | L | K | M | F | P | O | S | U | T | W | Y | V | B | Z | X | J
-    deriving (Show, Read)
+    deriving (Show, Read, Eq)
 
-data Charge = Singly | Doubly deriving (Show, Eq)
+type Peptide = [AminoAcid]
 
-data Alignment = Alignment {}
+data PeptideFragment = PeptideFragment
+    { mass :: Mass
+    , charge :: Charge
+    }
 
+data Charge = Singly | Doubly
+    deriving (Show, Eq)
+
+data PeptideCandidate = PeptideCandidate
+    { peptide :: Peptide
+    , score :: Int
+    } deriving (Show, Eq)

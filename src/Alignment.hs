@@ -1,10 +1,15 @@
+{-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE OverloadedRecordDot #-}
+
 module Alignment
-    (
+    ( module Alignment
     ) where
 
 import Domain
-import qualified Fasta
 
-align :: MassSpectrum -> MassSpectrum -> Alignment
-align observed theoretical = undefined
+data KMerStore = KMerStore
+    { kMers :: [Peptide]
+    }
+
+identifySpectrum :: MassSpectrum -> KMerStore -> [PeptideCandidate]
+identifySpectrum spec store = undefined

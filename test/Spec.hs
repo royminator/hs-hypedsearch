@@ -2,6 +2,7 @@ module Main
     ( main
     ) where
 
+import           AlignmentSpec
 import           FilteringSpec
 import           MzMLSpec
 import           Test.Tasty
