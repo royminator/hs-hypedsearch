@@ -10,7 +10,9 @@ import           Test.Tasty.Hspec
 
 main :: IO ()
 main = do
-    specs <- concat <$> mapM testSpecs [peakFilterSpecs, relativeAbundanceFilterSpecs]
+    specs <- concat <$> mapM testSpecs [ peakFilterSpecs
+                                       , relativeAbundanceFilterSpecs
+                                       , identifySpectrumSpec ]
     defaultMain ( testGroup "All tests"
                     [ testGroup "MzML Properties" mzMLProps
                     , testGroup "Filtering Specs" specs

@@ -15,15 +15,9 @@ data AminoAcid = A | R | N | D | C | Q | E | G | H | I | L | K | M | F | P | O |
 
 type Peptide = [AminoAcid]
 
-data PeptideFragment = PeptideFragment
-    { mass :: Mass
-    , charge :: Charge
-    }
-
 data Charge = Singly | Doubly
     deriving (Show, Eq)
 
-data PeptideCandidate = PeptideCandidate
-    { peptide :: Peptide
-    , score :: Int
-    } deriving (Show, Eq)
+data FragmentIon = B_ION | Y_ION
+    deriving (Show, Eq)
+
