@@ -3,10 +3,10 @@ module FilteringSpec
     , relativeAbundanceFilterSpecs
     ) where
 
+import           Data.Map
 import           Domain
 import           Filtering
 import           Test.Hspec
-import Data.Map
 
 peakFilterSpecs :: Spec
 peakFilterSpecs =

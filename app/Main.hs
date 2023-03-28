@@ -4,8 +4,8 @@ import qualified Config                     as Cfg
 import qualified Data.ByteString.Lazy.Char8 as BL
 import           Data.Yaml.Config
 import qualified Fasta
+import           Lens.Micro
 import qualified MzML.Parser                as MzML
-import Lens.Micro
 
 main :: IO ()
 main = do
