@@ -12,7 +12,9 @@ main :: IO ()
 main = do
     specs <- concat <$> mapM testSpecs [ peakFilterSpecs
                                        , relativeAbundanceFilterSpecs
-                                       , identifySpectrumSpec ]
+                                       , identifySpectrumSpec 
+                                       , alignSpec
+                                       ]
     defaultMain ( testGroup "All tests"
                     [ testGroup "MzML Properties" mzMLProps
                     , testGroup "Filtering Specs" specs
